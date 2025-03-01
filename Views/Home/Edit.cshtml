@@ -1,0 +1,12 @@
+@model Todo
+
+@{
+    Layout = null;
+}
+
+<form asp-action="Edit">
+    <input asp-for="Id" type="hidden">
+    <input asp-for="IsCompleted" type="hidden">
+    <input type="text" name="Task" value="@Model.Task" required>
+    <button>Güncelle</button>
+</form>

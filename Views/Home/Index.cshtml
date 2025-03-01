@@ -1,0 +1,78 @@
+﻿@model List<Todo>
+
+@{
+    ViewData["Title"] = "Todo List";
+}
+
+@if (TempData["SuccesMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccesMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<form action="/Home/Add" method="post" autocomplete="off">
+    <label>Eklenecek iş</label>
+    <input type="text" name="Task" required>
+    <button type="submit">Ekle</button>
+</form>
+<hr>
+<div class="row">
+    <div class="col-md-6">
+        <h2>Tamamlanmayanlar</h2>
+        <ul>
+            @foreach (var todos in Model)
+            {
+                if (todos.IsCompleted == false)
+                {
+                    <li>
+                        @todos.Task
+                        <a href="/Home/MarkCompleted/@todos.Id">✅</a>
+                        <a href="/Home/Edit/@todos.Id" class="edit btn btn-light">📝</a>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h2>Tamamlananlar</h2>
+        <ul>
+            @foreach (var todos in Model)
+            {
+                if (todos.IsCompleted == true)
+                {
+                    <li>
+                        @todos.Task
+                        <a href="/Home/MarkUncompleted/@todos.Id">❎</a>
+                        <a href="/Home/Delete/@todos.Id" onclick="return confirm('Silmek istediğinize emin misiniz?')">🗑️</a>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+<dialog id="dialog"></dialog>
+
+@section Scripts
+{
+    <script>
+        $('.alert').delay(1500).fadeOut();
+
+        document.querySelectorAll('.edit')
+            .forEach(x => x.addEventListener('click', handleEditClick));
+
+        function handleEditClick(e) {
+            e.preventDefault();
+            $('#dialog').load(this.href);
+            dialog.showModal();
+        }
+    </script>
+}
